@@ -1,6 +1,6 @@
 # Capstone_Project
 
-This repository contains all the relevant files of our project and the updated files along with the work done.
+This repository will contain all the relevant files of our project and the updated files along with the work done so far.
 
 Our approach to this project is 2 staged:
 
