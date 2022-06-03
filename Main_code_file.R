@@ -1,10 +1,9 @@
-
-install.packages("remotes")
-remotes::install_github("TimTeaFan/loopurrr")
-
-
 library(tidyverse)
 library(loopurrr)
+library(rio)
+library(purrr)
+
+# Reading in the Data from the Open Data portal of City of Windsor
 
 url <- c("https://opendata.citywindsor.ca/Uploads/3DayParkingInfraction_YTD.csv","https://opendata.citywindsor.ca/Uploads/3DayParkingInfraction_2021.csv","https://opendata.citywindsor.ca/Uploads/3DayParkingInfraction_2020.csv","https://opendata.citywindsor.ca/Uploads/3DayParkingInfraction_2019.csv","https://opendata.citywindsor.ca/Uploads/3DayParkingInfraction_2018.csv","https://opendata.citywindsor.ca/Uploads/3DayParkingInfraction_2017.csv","https://opendata.citywindsor.ca/Uploads/3DayParkingInfraction_Aug01-Dec31_2016.csv",
          "https://opendata.citywindsor.ca/Uploads/AbandonedVehicle_YTD.csv","https://opendata.citywindsor.ca/Uploads/AbandonedVehicle_2021.csv","https://opendata.citywindsor.ca/Uploads/AbandonedVehicle_2020.csv","https://opendata.citywindsor.ca/Uploads/AbandonedVehicle_2019.csv","https://opendata.citywindsor.ca/Uploads/AbandonedVehicle_2018.csv","https://opendata.citywindsor.ca/Uploads/AbandonedVehicle_2017.csv","https://opendata.citywindsor.ca/Uploads/AbandonedVehicle_Aug01-Dec31_2016.csv",
