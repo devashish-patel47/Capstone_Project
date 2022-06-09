@@ -1,0 +1,354 @@
+---
+title: "Assessment2_Group03"
+author: "Group_03"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+
+Group Number: 03
+
+Group Members:
+
+•	Chintan Wagh - 0788995     
+•	Devashish Patel - 0781214    
+•	Jervis Murzello - 0784028   
+•	Omkar Shinde – 0785564    
+•	Urvashi Ketulkumar Prajapati - 0785750      
+
+
+## Data Quality
+
+Our project involves a total of 373 datasets spread across a total of 96 public affairs. Most of the affairs are centred around maintenance of the houses, city roads, vehicles, animal issues etc. for the city of Windsor. For our project though, we are not going to be performing EDA and analysis on all of them. We will be performing EDA and analysis along with dashboard creation on select few datasets. To measure metrics like data quality, fitness of the data as well as the usability we have divided the work amongst all the 5 members of our group. Each member of the group will take approximately 19-20 affairs and download all the datasets on their end. Once that is done, each dataset will be checked for the completeness of the data, any missing values, any columns that are unexplained or not shown on the webpage of the datasets, consistency in the datasets of the same public affair etc.
+This information will be noted down in a total of 2 excel sheets. One sheet will note down all the datasets and their subsequent information and the other sheet will note down erroneous datasets that is any dataset(s) that have any errors in them.
+
+Since the datasets are different depending on the type of the public affair, the datasets have a mix of numeric as well as categorical variables. A lot of the datasets have the same columns with their different or same subsequent data points, but most of the datasets in this list that have these same columns have one column extra (Sub-type) in the data file that is not shown on the webpage of the public affair. While this is the information that we mined when we worked on this manually. Now we will show you the work that we will do using the dataReporter package.
+
+## Fitness
+
+The data is more than sufficient for answering our problem statement as well as performing the analytical process. We have a total of 373 datasets spread across 96 public affairs as mentioned above. We have our pick of the datasets on which we can perform EDA and subsequent dashboard making. Our research question will be sufficiently answered by the datasets available on the open data website of City of Windsor.
+
+## Ethical Assessment
+
+For our ethical assessment we are using the checklist readily available on deon package’s website with a few modifications as the data collection, storage, regulation and updation is handled by the city and we have no control over how the data is collected and regulated. We are merely using this data for our project from the website directly.
+
+Since our project is using open data, our checklist will be covered mostly by the original custodians of the data. That is the City of Windsor.
+
+### Data Science Ethical Checklist
+
+#### A. Data Collection
+
+•	  A.1 Informed consent: All data collection is handled by the city and they have their own usage policies with their own terms and conditions which make sure that all ethical principles are followed to the letter.    
+•	  A.2 Collection bias: The data covers a good portion of the city for most of the datasets and depending on the type of the affair, while we cannot assume that the data is free of bias, we assume that the data collection is appropriate with minimum bias and is ready for use.    
+•	  A.3 Limit PII exposure: Any PII data that might be displayed in any of the datasets has already been anonymized appropriately before displaying them on the website. This limits the PII exposure.    
+
+#### B. Data Storage
+•	  B.1 Data security: This data is readily available and since the data is open, the security is ensured by the user agreement present at the link given below. https://www.citywindsor.ca/opendata/Documents/OpenDataTermsofUse.pdf   
+
+#### C. Analysis
+•	  C.1 Missing perspectives: Currently the only stakeholder before package deployment is our project guide. We have addressed all concerns and issues regarding the package development. The EDA, analysis and dashboard creation are in the second stage of the project and will be addressed later as and when we come up with any concerns. We also discussed the possible implications of incorrect usage of our package with our project guide. Since the data will be used directly by the users, they will also be bound by the same user agreement that we are bound by available at the link in the previous section.   
+•	  C.2 Dataset bias: The datasets of Building Conditions cover a total of 10 Wards in the city of Windsor with most of the streets covered. To reduce bias we will focus on the data of all the years along with the YTD data.   
+•	  C.3 Honest representation: All our visualizations will be informed by the data itself and we have not manipulated any data to affect any specific changes in the visualizations. We have represented everything honestly as per the data available to us.    
+•	  C.4 Privacy in analysis: Since all the PII data is already anonymized, none of our visualizations will display any PII data that can be tracked to a particular individual.    
+•	  C.5 Auditability: Since our visualizations will be checked by our project guide, any issues that arise will be rectified in the future documentations and submissions.    
+
+#### D. Deployment
+
+•	  D.1 Redress: We are going to have a GitHub page for our package and we will try to address any and all issues that are raised by the users to the best of our abilities.   
+•	  D.2 Roll back: If necessary, the package will be completely removed from GitHub pages. We will also notify the appropriate stakeholders with the help of our project guide if any further action will be necessary on our end.   
+•	  D.3 Concept drift: Since our package is not related to machine learning and the usability is fixed, there are no chances of drift.   
+•	  D.4 Unintended use: All the users of our package will be bound by the same agreement that we are as mentioned above. If there is any unintended use, we will notify the City of Windsor should there be any issues that arise in the usage of the data available through the use of our package. Appropriate action will be taken by the city as they have the authority to do so and also because they are the custodians of the data.   
+
+### Future Needs and Potential Challenges
+
+In the future, after successful deployment of our package, we will try to include the usage of all the spatial data files and the formats as well to make the package a complete package. Significant work will be required to work with spatial data as we have never worked on spatial data before. Along with this, the work required for us to make changes in the package to include all file formats like kmz, dwg, zip files will be significant.
+
+## EDA
+
+The EDA starts from here. Since the issue is the same, the data format is the same.We have shown each year separately one below the other starting from 2021 and ending at 2016.
+
+#### 2021
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(readr)
+library(skimr)
+library(dataReporter)
+```
+
+
+```{r}
+data <- read_csv("D:/My data/St. CLAIR/SUBJECTS/SEM IV/Capstone Project/Our project/Capstone_DAB_402/BuildingConditions_2021.csv")
+data1 <- read_csv("D:/My data/St. CLAIR/SUBJECTS/SEM IV/Capstone Project/Our project/Capstone_DAB_402/BuildingConditions_2020.csv")
+data2 <- read_csv("D:/My data/St. CLAIR/SUBJECTS/SEM IV/Capstone Project/Our project/Capstone_DAB_402/BuildingConditions_2019.csv")
+data3 <- read_csv("D:/My data/St. CLAIR/SUBJECTS/SEM IV/Capstone Project/Our project/Capstone_DAB_402/BuildingConditions_2018.csv")
+data4 <- read_csv("D:/My data/St. CLAIR/SUBJECTS/SEM IV/Capstone Project/Our project/Capstone_DAB_402/BuildingConditions_Aug01-Dec31_2016.csv")
+data5 <- read_csv("D:/My data/St. CLAIR/SUBJECTS/SEM IV/Capstone Project/Our project/Capstone_DAB_402/BuildingConditions_YTD.csv")
+
+df <- data[,c(1:7),drop = TRUE]
+df1 <- data1[,c(1:7),drop = TRUE]
+df2 <- data2[,c(1:7),drop = TRUE]
+df3 <- data3[,c(1:7),drop = TRUE]
+df4 <- data4[,c(1:7),drop = TRUE]
+df5 <- data5[,c(1:7),drop = TRUE]
+```
+
+
+```{r}
+df <- df %>% rename(Method_Received = 'Method Received', Created_Date = `Created Date`)
+```
+
+Only the columns Block/Address and Street have NA values. If these values are missing then the entire column has no significance as the officials won't know where to go. This is why entire rows have been removed if NA values are present.
+
+```{r}
+df <- na.omit(df)
+df
+```
+
+```{r}
+df_stats <- df %>% skim
+df_stats
+```
+
+```{r}
+df_sumstats <- summary(df)
+df_sumstats
+```
+
+```{r}
+glimpse(df)
+```
+
+
+```{r}
+check(df)
+```
+
+
+
+
+```{r}
+ggplot(df, mapping = aes(x = Method_Received, fill = Ward))+
+  geom_bar(position = "dodge")
+```
+
+
+```{r}
+ggplot(df,mapping = aes(x = Method_Received, fill = Ward))+
+  geom_bar(position = "fill") +
+  labs(y = "Proportion")
+```
+
+#### 2020
+
+```{r}
+df1 <- df1 %>% rename(Method_Received = 'Method Received',
+  Created_Date = `Created Date`)
+```
+
+Only the columns Block/Address and Street have NA values. If these values are missing then the entire column has no significance as the officials won't know where to go. This is why entire rows have been removed if NA values are present.
+
+```{r}
+df1 <- na.omit(df1)
+df1
+```
+
+```{r}
+df1_stats <- df1 %>% skim
+df1_stats
+```
+
+```{r}
+df1_sumstats <- summary(df1)
+df1_sumstats
+```
+
+```{r}
+glimpse(df1)
+```
+
+
+```{r}
+ggplot(df1, mapping = aes(x = Method_Received, fill = Ward))+
+  geom_bar(position = "dodge")
+```
+
+
+```{r}
+ggplot(df1,mapping = aes(x = Method_Received, fill = Ward))+
+  geom_bar(position = "fill") +
+  labs(y = "Proportion")
+```
+
+#### 2019
+
+```{r}
+df2 <- df2 %>% rename(Method_Received = 'Method Received', Created_Date = `Created Date`)
+```
+
+Only the columns Block/Address and Street have NA values. If these values are missing then the entire column has no significance as the officials won't know where to go. This is why entire rows have been removed if NA values are present.
+
+```{r}
+df2 <- na.omit(df2)
+df2
+```
+
+```{r}
+df2_stats <- df2 %>% skim
+df2_stats
+```
+
+```{r}
+df2_sumstats <- summary(df2)
+df2_sumstats
+```
+
+```{r}
+glimpse(df2)
+```
+
+
+```{r}
+ggplot(df2, mapping = aes(x = Method_Received, fill = Ward))+
+  geom_bar(position = "dodge")
+```
+
+
+```{r}
+ggplot(df2,mapping = aes(x = Method_Received, fill = Ward))+
+  geom_bar(position = "fill") +
+  labs(y = "Proportion")
+```
+
+#### 2018
+
+
+```{r}
+df3 <- df3 %>% rename(Method_Received = 'Method Received', Created_Date = `Created Date`)
+```
+
+Only the columns Block/Address and Street have NA values. If these values are missing then the entire column has no significance as the officials won't know where to go. This is why entire rows have been removed if NA values are present.
+
+```{r}
+df3 <- na.omit(df3)
+df3
+```
+
+```{r}
+df3_stats <- df3 %>% skim
+df3_stats
+```
+
+```{r}
+df3_sumstats <- summary(df3)
+df3_sumstats
+```
+
+```{r}
+glimpse(df3)
+```
+
+
+```{r}
+ggplot(df3, mapping = aes(x = Method_Received, fill = Ward))+
+  geom_bar(position = "dodge")
+```
+
+
+```{r}
+ggplot(df3,mapping = aes(x = Method_Received, fill = Ward))+
+  geom_bar(position = "fill") +
+  labs(y = "Proportion")
+```
+
+#### 2016 and before
+
+
+```{r}
+df4 <- df4 %>% rename(Method_Received = 'Method Received', Created_Date = `Created Date`)
+```
+
+Only the columns Block/Address and Street have NA values. If these values are missing then the entire column has no significance as the officials won't know where to go. This is why entire rows have been removed if NA values are present.
+
+```{r}
+df4 <- na.omit(df4)
+df4
+```
+
+```{r}
+df4_stats <- df4 %>% skim
+df4_stats
+```
+
+```{r}
+df4_sumstats <- summary(df4)
+df4_sumstats
+```
+
+```{r}
+glimpse(df4)
+```
+
+
+```{r}
+ggplot(df4, mapping = aes(x = Method_Received, fill = Ward))+
+  geom_bar(position = "dodge")
+```
+
+
+```{r}
+ggplot(df4,mapping = aes(x = Method_Received, fill = Ward))+
+  geom_bar(position = "fill") +
+  labs(y = "Proportion")
+```
+
+
+#### YTD
+
+
+```{r}
+df5 <- df5 %>% rename(Method_Received = 'Method Received', Created_Date = `Created Date`)
+```
+
+Only the columns Block/Address and Street have NA values. If these values are missing then the entire column has no significance as the officials won't know where to go. This is why entire rows have been removed if NA values are present.
+
+```{r}
+df5 <- na.omit(df5)
+df5
+```
+
+```{r}
+df5_stats <- df5 %>% skim
+df5_stats
+```
+
+```{r}
+df5_sumstats <- summary(df5)
+df5_sumstats
+```
+
+```{r}
+glimpse(df5)
+```
+
+
+```{r}
+ggplot(df5, mapping = aes(x = Method_Received, fill = Ward))+
+  geom_bar(position = "dodge")
+```
+
+
+```{r}
+ggplot(df5,mapping = aes(x = Method_Received, fill = Ward))+
+  geom_bar(position = "fill") +
+  labs(y = "Proportion")
+```
+
+> We can see that each year has different proportions of method of complaint reception.
+
+### Contact Us
+
+Our GitHub pages of this project:
+
+
