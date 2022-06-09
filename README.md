@@ -2,6 +2,8 @@
 
 This repository will contain all the relevant files of our project and the updated files along with the work done so far.
 
+Our project is focused around creating an R interface for the open data portal of City of Windsor which will enable users to load the data into their R environments directly without the need to download each and every file individually. Once that is done, we also aim to perform EDA on select issues and then make a dashboard to show our analysis. 
+
 Our approach to this project is 2 staged:
 
 Stage 1: Creation, Development, Deployment of a package named opendatawindsor
