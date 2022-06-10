@@ -81,8 +81,6 @@ ggplot(df, mapping = aes(x = Method_Received, fill = Ward))+
   labs(title = "Distribution of Mediums Used to Lodge Building Conditions Complaints")
 ```
 
-We can see that in 2021, phone is the method which was most common that was used to receive the complaint followed by E-mail and rarely anyone used Text as complaint medium.
-Wardwise Ward 2 has the highest number of complaints when it comes to email medium of complaint while Ward 3 has the highest complaints for the phone medium. For text medium, only ward 2 has made complaints as made clear by the graph below.
 
 ```{r}
 ggplot(df,mapping = aes(x = Method_Received, fill = Ward))+
@@ -91,15 +89,10 @@ ggplot(df,mapping = aes(x = Method_Received, fill = Ward))+
 ```
 
 
-
-The graph above shows us a similar view as the previous graph but over here we can see the proportion of each ward out of the total number of complaints made by that particular medium instead of just the count on the y-axis which gives us a better understanding of Wardwise distribution in terms of the particular medium/media used to lodge a complaint.
-
-We can see that across the methods Ward 2 had the highest proportion of overall complaints. On the other hand, ward 9 and ward 8 had the lowest proportion of complaints.
-
-
 ```{r}
 df2 <- read_csv(c("BuildingLandImproperUse_2021.csv","BuildingLandImproperUse_2020.csv","BuildingLandImproperUse_2019.csv","BuildingLandImproperUse_2018.csv","BuildingLandImproperUse_Aug01-Dec31_2016.csv"))
 ```
+
 ```{r}
 df2 <- df2[,c(1:7),drop = TRUE]
 df2
@@ -110,7 +103,7 @@ df2
 df2 <- df2 %>% rename(Method_Received = 'Method Received', Created_Date = `Created Date`)
 ```
 
-Only the columns Block/Address and Street have NA values. If these values are missing then the entire column has no significance as the officials won't know where to go. This is why entire rows have been removed if NA values are present.
+Only the columns Block/Address and Street have NA values. If these values are missing then the entire row has no significance as the officials won't know where to go. This is why entire rows have been removed if NA values are present.
 
 ```{r}
 df2 <- na.omit(df2)
@@ -124,8 +117,6 @@ ggplot(df2, mapping = aes(x = Method_Received, fill = Ward))+
   labs(title = "Distribution of Mediums used to Lodge Building/Land Improper use Complaints")
 ```
 
-We can see that in 2021, phone is the method which was most common that was used to receive the complaint followed by E-mail and rarely anyone used Text as complaint medium.
-Wardwise Ward 2 has the highest number of complaints when it comes to email medium of complaint while Ward 3 has the highest complaints for the phone medium. For text medium, only ward 2 has made complaints as made clear by the graph below.
 
 ```{r}
 ggplot(df2,mapping = aes(x = Method_Received, fill = Ward))+
