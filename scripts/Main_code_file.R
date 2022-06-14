@@ -95,11 +95,26 @@ read_file_possibly <- purrr::safely(read_file1)
 
 data <- purrr::map(url,read_file_possibly)
 
-list_datasets<- function(list_datasets){
-list_datasets <- read_excel("List of Datasets.xlsx") # Reading in the main list of datasets available in our package.
+# Reading in the main list of Datasets available in the package
 
-return(list_datasets)
+list1 <- read_excel("List of Datasets.xlsx")
+list1
+
+# Cleaning the NA values by filling in values from previous row
+
+list1 <- list1 %>% fill(c('Name of the Issue','Description','Attributes','Data Updation','No. of Datasets on the issue'))
+
+glimpse(list1)
+
+# list_datasets() function code
+
+list_datasets<- function(list_datasets){
+list_datasets <- list1
+
+return(list1)
 }
+
+# cleaned_list() function code
 
 cleaned_list <- function(cleaned_list){
 cleaned_list <- read_excel("Erroneous Datasets.xlsx") # Reading in the list of datasets with inconsistencies and errors.
