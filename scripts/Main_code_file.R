@@ -95,10 +95,18 @@ read_file_possibly <- purrr::safely(read_file1)
 
 data <- purrr::map(url,read_file_possibly)
 
+list_datasets<- function(list_datasets){
+list_datasets <- read_excel("List of Datasets.xlsx") # Reading in the main list of datasets available in our package.
 
-read_excel("List of Datasets.xlsx") # Reading in the main list of datasets available in our package.
+return(list_datasets)
+}
 
-read_excel("Erroneous Datasets.xlsx") # Reading in the list of datasets with inconsistencies and errors.
+cleaned_list <- function(cleaned_list){
+cleaned_list <- read_excel("Erroneous Datasets.xlsx") # Reading in the list of datasets with inconsistencies and errors.
 
+return(cleaned_list)
+}
 
+list_datasets()
+cleaned_list()
 
