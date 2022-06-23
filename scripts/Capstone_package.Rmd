@@ -1,0 +1,282 @@
+---
+title: "flat_teaching.Rmd for working package"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(readxl)
+library(readr)
+library(tidyverse)
+library(loopurrr)
+library(rio)
+library(purrr)
+
+```
+
+```{r}
+url <- c("https://opendata.citywindsor.ca/Uploads/3DayParkingInfraction_YTD.csv","https://opendata.citywindsor.ca/Uploads/3DayParkingInfraction_2021.csv","https://opendata.citywindsor.ca/Uploads/3DayParkingInfraction_2020.csv","https://opendata.citywindsor.ca/Uploads/3DayParkingInfraction_2019.csv","https://opendata.citywindsor.ca/Uploads/3DayParkingInfraction_2018.csv","https://opendata.citywindsor.ca/Uploads/3DayParkingInfraction_2017.csv","https://opendata.citywindsor.ca/Uploads/3DayParkingInfraction_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/AbandonedVehicle_YTD.csv","https://opendata.citywindsor.ca/Uploads/AbandonedVehicle_2021.csv","https://opendata.citywindsor.ca/Uploads/AbandonedVehicle_2020.csv","https://opendata.citywindsor.ca/Uploads/AbandonedVehicle_2019.csv","https://opendata.citywindsor.ca/Uploads/AbandonedVehicle_2018.csv","https://opendata.citywindsor.ca/Uploads/AbandonedVehicle_2017.csv","https://opendata.citywindsor.ca/Uploads/AbandonedVehicle_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/AllServiceRequests_YTD.csv","https://opendata.citywindsor.ca/Uploads/AllServiceRequests_2021.csv","https://opendata.citywindsor.ca/Uploads/AllServiceRequests_2020.csv","https://opendata.citywindsor.ca/Uploads/AllServiceRequests_2019.csv","https://opendata.citywindsor.ca/Uploads/AllServiceRequests_2018.csv","https://opendata.citywindsor.ca/Uploads/AllServiceRequests_2017.csv","https://opendata.citywindsor.ca/Uploads/AllServiceRequests_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/AlleyMaintenance_YTD.csv","https://opendata.citywindsor.ca/Uploads/AlleyMaintenance_2021.csv","https://opendata.citywindsor.ca/Uploads/AlleyMaintenance_2020.csv","https://opendata.citywindsor.ca/Uploads/AlleyMaintenance_2019.csv","https://opendata.citywindsor.ca/Uploads/AlleyMaintenance_2018.csv","https://opendata.citywindsor.ca/Uploads/AlleyMaintenance_2017.csv","https://opendata.citywindsor.ca/Uploads/AlleyMaintenance_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/Arenas.csv","https://opendata.citywindsor.ca/Uploads/BuildingAccessibility_YTD.csv","https://opendata.citywindsor.ca/Uploads/BuildingAccessibility_2021.csv","https://opendata.citywindsor.ca/Uploads/BuildingAccessibility_2020.csv","https://opendata.citywindsor.ca/Uploads/BuildingAccessibility_2019.csv","https://opendata.citywindsor.ca/Uploads/BuildingAccessibility_2018.csv","https://opendata.citywindsor.ca/Uploads/BuildingAccessibility_2017.csv","https://opendata.citywindsor.ca/Uploads/BuildingAccessibility_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/BuildingConditions_YTD.csv","https://opendata.citywindsor.ca/Uploads/BuildingConditions_2021.csv","https://opendata.citywindsor.ca/Uploads/BuildingConditions_2020.csv","https://opendata.citywindsor.ca/Uploads/BuildingConditions_2019.csv","https://opendata.citywindsor.ca/Uploads/BuildingConditions_2018.csv","https://opendata.citywindsor.ca/Uploads/BuildingConditions_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/BuildingLandImproperUse_YTD.csv","https://opendata.citywindsor.ca/Uploads/BuildingLandImproperUse_2021.csv","https://opendata.citywindsor.ca/Uploads/BuildingLandImproperUse_2020.csv","https://opendata.citywindsor.ca/Uploads/BuildingLandImproperUse_2019.csv","https://opendata.citywindsor.ca/Uploads/BuildingLandImproperUse_2018.csv","https://opendata.citywindsor.ca/Uploads/BuildingLandImproperUse_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/OMBI_report.csv",
+         "https://opendata.citywindsor.ca/Uploads/Community_Centres.csv",
+         "https://opendata.citywindsor.ca/Uploads/ConstructionSiteConditions_YTD.csv","https://opendata.citywindsor.ca/Uploads/ConstructionSiteConditions_2021.csv","https://opendata.citywindsor.ca/Uploads/ConstructionSiteConditions_2020.csv","https://opendata.citywindsor.ca/Uploads/ConstructionSiteConditions_2019.csv","https://opendata.citywindsor.ca/Uploads/ConstructionSiteConditions_2018.csv","https://opendata.citywindsor.ca/Uploads/ConstructionSiteConditions_2017.csv","https://opendata.citywindsor.ca/Uploads/ConstructionSiteConditions_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/Crossing%20Guard%20Locations.csv",
+         "https://opendata.citywindsor.ca/Uploads/CurbMaintenance_YTD.csv","https://opendata.citywindsor.ca/Uploads/CurbMaintenance_2021.csv","https://opendata.citywindsor.ca/Uploads/CurbMaintenance_2020.csv","https://opendata.citywindsor.ca/Uploads/CurbMaintenance_2019.csv","https://opendata.citywindsor.ca/Uploads/CurbMaintenance_2018.csv","https://opendata.citywindsor.ca/Uploads/CurbMaintenance_2017.csv","https://opendata.citywindsor.ca/Uploads/CurbMaintenance_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/DeadAnimalRemoval_YTD.csv","https://opendata.citywindsor.ca/Uploads/DeadAnimalRemoval_2021.csv","https://opendata.citywindsor.ca/Uploads/DeadAnimalRemoval_2020.csv","https://opendata.citywindsor.ca/Uploads/DeadAnimalRemoval_2019.csv","https://opendata.citywindsor.ca/Uploads/DeadAnimalRemoval_2018.csv","https://opendata.citywindsor.ca/Uploads/DeadAnimalRemoval_2017.csv","https://opendata.citywindsor.ca/Uploads/DeadAnimalRemoval_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/DirtyYard_YTD.csv","https://opendata.citywindsor.ca/Uploads/DirtyYard_2021.csv","https://opendata.citywindsor.ca/Uploads/DirtyYard_2020.csv","https://opendata.citywindsor.ca/Uploads/DirtyYard_2019.csv","https://opendata.citywindsor.ca/Uploads/DirtyYard_2018.csv","https://opendata.citywindsor.ca/Uploads/DirtyYard_2017.csv","https://opendata.citywindsor.ca/Uploads/DirtyYard_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/DogComplaintBylaw_YTD.csv","https://opendata.citywindsor.ca/Uploads/DogComplaintBylaw_2021.csv","https://opendata.citywindsor.ca/Uploads/DogComplaintBylaw_2020.csv","https://opendata.citywindsor.ca/Uploads/DogComplaintBylaw_2019.csv","https://opendata.citywindsor.ca/Uploads/DogComplaintBylaw_2018.csv","https://opendata.citywindsor.ca/Uploads/DogComplaintBylaw_2017.csv","https://opendata.citywindsor.ca/Uploads/DogComplaintBylaw_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/DownspoutDisconnect_YTD.csv","https://opendata.citywindsor.ca/Uploads/DownspoutDisconnect_2021.csv","https://opendata.citywindsor.ca/Uploads/DownspoutDisconnect_2020.csv","https://opendata.citywindsor.ca/Uploads/DownspoutDisconnect_2019.csv","https://opendata.citywindsor.ca/Uploads/DownspoutDisconnect_2018.csv","https://opendata.citywindsor.ca/Uploads/DownspoutDisconnect_2017.csv","https://opendata.citywindsor.ca/Uploads/DownspoutDisconnect_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/Drainage_YTD.csv","https://opendata.citywindsor.ca/Uploads/Drainage_2021.csv","https://opendata.citywindsor.ca/Uploads/Drainage_2020.csv","https://opendata.citywindsor.ca/Uploads/Drainage_2019.csv","https://opendata.citywindsor.ca/Uploads/Drainage_2018.csv","https://opendata.citywindsor.ca/Uploads/Drainage_2017.csv","https://opendata.citywindsor.ca/Uploads/Drainage_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/City%20Windsor%20Elected%20Officials.csv",
+         "https://opendata.citywindsor.ca/Uploads/OfficialElection2010.xls",
+         "https://opendata.citywindsor.ca/Uploads/Election2014.xlsx",
+         "https://opendata.citywindsor.ca/Uploads/results-2018.csv","https://opendata.citywindsor.ca/Uploads/detailedresults-2018.csv",
+         "https://opendata.citywindsor.ca/Uploads/Results-2020.csv","https://opendata.citywindsor.ca/Uploads/DetailedResults-2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/FenceAndHedge_YTD.csv","https://opendata.citywindsor.ca/Uploads/FenceAndHedge_2021.csv","https://opendata.citywindsor.ca/Uploads/FenceAndHedge_2021.csv","https://opendata.citywindsor.ca/Uploads/FenceAndHedge_2020.csv","https://opendata.citywindsor.ca/Uploads/FenceAndHedge_2019.csv","https://opendata.citywindsor.ca/Uploads/FenceAndHedge_2018.csv","https://opendata.citywindsor.ca/Uploads/FenceAndHedge_2017.csv","https://opendata.citywindsor.ca/Uploads/FenceAndHedge_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/Fire_Stations.csv",
+         "https://opendata.citywindsor.ca/Uploads/GarbageNotCollected_YTD.csv","https://opendata.citywindsor.ca/Uploads/GarbageNotCollected_2021.csv","https://opendata.citywindsor.ca/Uploads/GarbageNotCollected_2020.csv","https://opendata.citywindsor.ca/Uploads/GarbageNotCollected_2019.csv","https://opendata.citywindsor.ca/Uploads/GarbageNotCollected_2018.csv","https://opendata.citywindsor.ca/Uploads/GarbageNotCollected_2017.csv","https://opendata.citywindsor.ca/Uploads/GarbageNotCollected_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/GarbagePreparation_YTD.csv","https://opendata.citywindsor.ca/Uploads/GarbagePreparation_2021.csv","https://opendata.citywindsor.ca/Uploads/GarbagePreparation_2020.csv","https://opendata.citywindsor.ca/Uploads/GarbagePreparation_2019.csv","https://opendata.citywindsor.ca/Uploads/GarbagePreparation_2018.csv","https://opendata.citywindsor.ca/Uploads/GarbagePreparation_2017.csv","https://opendata.citywindsor.ca/Uploads/GarbagePreparation_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/Graffiti_YTD.csv","https://opendata.citywindsor.ca/Uploads/Graffiti_2021.csv","https://opendata.citywindsor.ca/Uploads/Graffiti_2020.csv","https://opendata.citywindsor.ca/Uploads/Graffiti_2018.csv","https://opendata.citywindsor.ca/Uploads/Graffiti_2017.csv","https://opendata.citywindsor.ca/Uploads/Graffiti_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/Heritage%20Sites.csv",
+         "https://opendata.citywindsor.ca/Uploads/Hospitals.csv",
+         "https://opendata.citywindsor.ca/Uploads/DeadAnimalRemovalHS_YTD.csv","https://opendata.citywindsor.ca/Uploads/DeadAnimalRemovalHS_2021.csv","https://opendata.citywindsor.ca/Uploads/DeadAnimalRemovalHS_2020.csv","https://opendata.citywindsor.ca/Uploads/DeadAnimalRemovalHS_2019.csv","https://opendata.citywindsor.ca/Uploads/DeadAnimalRemovalHS_2018.csv",
+         "https://opendata.citywindsor.ca/Uploads/IllegalDumpingPublicProperty_YTD.csv","https://opendata.citywindsor.ca/Uploads/IllegalDumpingPublicProperty_2021.csv","https://opendata.citywindsor.ca/Uploads/IllegalDumpingPublicProperty_2020.csv","https://opendata.citywindsor.ca/Uploads/IllegalDumpingPublicProperty_2019.csv","https://opendata.citywindsor.ca/Uploads/IllegalDumpingPublicProperty_2018.csv","https://opendata.citywindsor.ca/Uploads/IllegalDumpingPublicProperty_2017.csv","https://opendata.citywindsor.ca/Uploads/IllegalDumpingPublicProperty_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/KeepingOfAnimals_YTD.csv","https://opendata.citywindsor.ca/Uploads/KeepingOfAnimals_2021.csv","https://opendata.citywindsor.ca/Uploads/KeepingOfAnimals_2020.csv","https://opendata.citywindsor.ca/Uploads/KeepingOfAnimals_2019.csv","https://opendata.citywindsor.ca/Uploads/KeepingOfAnimals_2018.csv","https://opendata.citywindsor.ca/Uploads/KeepingOfAnimals_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/Libraries.csv",
+         "https://opendata.citywindsor.ca/Uploads/LitterBinRequestNew_YTD.csv","https://opendata.citywindsor.ca/Uploads/LitterBinRequestNew_2021.csv","https://opendata.citywindsor.ca/Uploads/LitterBinRequestNew_2020.csv","https://opendata.citywindsor.ca/Uploads/LitterBinRequestNew_2019.csv","https://opendata.citywindsor.ca/Uploads/LitterBinRequestNew_2018.csv","https://opendata.citywindsor.ca/Uploads/LitterBinRequestNew_2017.csv","https://opendata.citywindsor.ca/Uploads/LitterBinRequestNew_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/LitterBinService_YTD.csv","https://opendata.citywindsor.ca/Uploads/LitterBinService_2021.csv","https://opendata.citywindsor.ca/Uploads/LitterBinService_2020.csv","https://opendata.citywindsor.ca/Uploads/LitterBinService_2019.csv","https://opendata.citywindsor.ca/Uploads/LitterBinService_2018.csv","https://opendata.citywindsor.ca/Uploads/LitterBinService_2017.csv","https://opendata.citywindsor.ca/Uploads/LitterBinService_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/Noise_YTD.csv","https://opendata.citywindsor.ca/Uploads/Noise_2021.csv","https://opendata.citywindsor.ca/Uploads/Noise_2020.csv","https://opendata.citywindsor.ca/Uploads/Noise_2019.csv","https://opendata.citywindsor.ca/Uploads/Noise_2018.csv","https://opendata.citywindsor.ca/Uploads/Noise_2017.csv","https://opendata.citywindsor.ca/Uploads/Noise_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/Parking%20Lots%20and%20Garages.csv",
+         "https://opendata.citywindsor.ca/Uploads/ParkingMeter_YTD.csv","https://opendata.citywindsor.ca/Uploads/ParkingMeter_2021.csv","https://opendata.citywindsor.ca/Uploads/ParkingMeter_2020.csv","https://opendata.citywindsor.ca/Uploads/ParkingMeter_2019.csv","https://opendata.citywindsor.ca/Uploads/ParkingMeter_2018.csv","https://opendata.citywindsor.ca/Uploads/ParkingMeter_2017.csv","https://opendata.citywindsor.ca/Uploads/ParkingMeter_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/Park%20Name%20and%20Addresses.csv",
+         "https://opendata.citywindsor.ca/Uploads/Parks%20Centroids.csv",
+         "https://opendata.citywindsor.ca/Uploads/619c7c78-80c6-458e-b384-b867war5c3eafe6.csv","https://opendata.citywindsor.ca/Uploads/ParksLighting_2021.csv",
+         "https://opendata.citywindsor.ca/Uploads/1f301b1e-f40a-43df-9386-787d3947400d.csv","https://opendata.citywindsor.ca/Uploads/ParksMaintenance_2021.csv",
+         "https://opendata.citywindsor.ca/Uploads/8312b529-2bbb-4376-9eff-1a2e76d987ca.csv","https://opendata.citywindsor.ca/Uploads/ParksPlayground_2021.csv",
+         "https://opendata.citywindsor.ca/Uploads/Playgrounds.csv",
+         "https://opendata.citywindsor.ca/Uploads/YardWasteNotCollected_YTD.csv","https://opendata.citywindsor.ca/Uploads/YardWasteNotCollected_2021.csv","https://opendata.citywindsor.ca/Uploads/YardWasteNotCollected_2019.csv","https://opendata.citywindsor.ca/Uploads/YardWasteNotCollected_2018.csv","https://opendata.citywindsor.ca/Uploads/YardWasteNotCollected_2017.csv","https://opendata.citywindsor.ca/Uploads/YardWasteNotCollected_Aug01-Dec31_2016.csv","https://opendata.citywindsor.ca/Uploads/YardWasteNotCollected_2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/snowplow-2022-03-21_2022-03-27.csv","https://opendata.citywindsor.ca/Uploads/snowplow-2022-03-14_2022-03-20.csv","https://opendata.citywindsor.ca/Uploads/snowplow-2022-03-07_2022-03-13.csv","https://opendata.citywindsor.ca/Uploads/snowplow-2022-02-28_2022-03-06.csv","https://opendata.citywindsor.ca/Uploads/snowplow-2022-02-21_2022-02-27.csv","https://opendata.citywindsor.ca/Uploads/snowplow-2022-02-14_2022-02-20.csv","https://opendata.citywindsor.ca/Uploads/snowplow-2022-02-07_2022-02-13.csv","https://opendata.citywindsor.ca/Uploads/snowplow-2022-01-31_2022-02-06.csv","https://opendata.citywindsor.ca/Uploads/snowplow-2022-01-24_2022-01-30.csv","https://opendata.citywindsor.ca/Uploads/snowplow-2022-01-17_2022-01-23.csv",
+         "https://opendata.citywindsor.ca/Uploads/WebAnalytics.csv",
+         "https://opendata.citywindsor.ca/Uploads/Voting_Locations_LL84.csv",
+         "https://opendata.citywindsor.ca/Uploads/Appendix%20A%20-%202014%20Q3%20Variance%20Projections_20141027.xlsx",
+         "https://opendata.citywindsor.ca/Uploads/Trees%20in%20Right%20of%20Way.csv","https://opendata.citywindsor.ca/Uploads/Trees%20in%20Parks_Facilities.csv",
+         "https://opendata.citywindsor.ca/Uploads/TreeRequest_YTD.csv","https://opendata.citywindsor.ca/Uploads/TreeRequest_2021.csv","https://opendata.citywindsor.ca/Uploads/TreeRequest_2019.csv","https://opendata.citywindsor.ca/Uploads/TreeRequest_2018.csv","https://opendata.citywindsor.ca/Uploads/TreeRequest_2017.csv","https://opendata.citywindsor.ca/Uploads/TreeRequest_Aug01-Dec31_2016.csv","https://opendata.citywindsor.ca/Uploads/TreeRequest_2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/Transit%20Windsor%20Bus%20Stops.csv",
+         "https://opendata.citywindsor.ca/Uploads/StreetSweeping_YTD.csv", "https://opendata.citywindsor.ca/Uploads/StreetSweeping_2021.csv","https://opendata.citywindsor.ca/Uploads/StreetSweeping_2019.csv","https://opendata.citywindsor.ca/Uploads/StreetSweeping_2018.csv","https://opendata.citywindsor.ca/Uploads/StreetSweeping_2017.csv","https://opendata.citywindsor.ca/Uploads/StreetSweeping_Aug01-Dec31_2016.csv","https://opendata.citywindsor.ca/Uploads/StreetSweeping_2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/SnowRemovalEmergency_YTD.csv","https://opendata.citywindsor.ca/Uploads/SnowRemovalEmergency_2021.csv","https://opendata.citywindsor.ca/Uploads/SnowRemovalEmergency_2019.csv","https://opendata.citywindsor.ca/Uploads/SnowRemovalEmergency_2018.csv","https://opendata.citywindsor.ca/Uploads/SnowRemovalEmergency_2017.csv","https://opendata.citywindsor.ca/Uploads/SnowRemovalEmergency_Aug01-Dec31_2016.csv", "https://opendata.citywindsor.ca/Uploads/SnowRemovalEmergency_2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/SnowPlowingSaltingRequest_YTD.csv","https://opendata.citywindsor.ca/Uploads/SnowPlowingSaltingRequest_2021.csv","https://opendata.citywindsor.ca/Uploads/SnowPlowingSaltingRequest_2019.csv","https://opendata.citywindsor.ca/Uploads/SnowPlowingSaltingRequest_2018.csv","https://opendata.citywindsor.ca/Uploads/SnowPlowingSaltingRequest_2017.csv","https://opendata.citywindsor.ca/Uploads/SnowPlowingSaltingRequest_Aug01-Dec31_2016.csv","https://opendata.citywindsor.ca/Uploads/SnowPlowingSaltingRequest_2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/SnowAndIceRemovalIssuesSidewalks_YTD.csv","https://opendata.citywindsor.ca/Uploads/SnowAndIceRemovalIssuesSidewalks_2021.csv","https://opendata.citywindsor.ca/Uploads/SnowAndIceRemovalIssuesSidewalks_2019.csv","https://opendata.citywindsor.ca/Uploads/SnowAndIceRemovalIssuesSidewalks_2018.csv","https://opendata.citywindsor.ca/Uploads/SnowAndIceRemovalIssuesSidewalks_2017.csv","https://opendata.citywindsor.ca/Uploads/SnowAndIceRemovalIssuesSidewalks_2016.csv","https://opendata.citywindsor.ca/Uploads/SnowAndIceRemovalIssuesSidewalks_2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/SnowAndIceDumpingOnRoadAlley_YTD.csv","https://opendata.citywindsor.ca/Uploads/SnowAndIceDumpingOnRoadAlley_2021.csv","https://opendata.citywindsor.ca/Uploads/SnowAndIceDumpingOnRoadAlley_2019.csv","https://opendata.citywindsor.ca/Uploads/SnowAndIceDumpingOnRoadAlley_2018.csv","https://opendata.citywindsor.ca/Uploads/SnowAndIceDumpingOnRoadAlley_2017.csv","https://opendata.citywindsor.ca/Uploads/SnowAndIceDumpingOnRoadAlley_Aug01-Dec31_2016.csv" , "https://opendata.citywindsor.ca/Uploads/SnowAndIceDumpingOnRoadAlley_2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/SkunkInspection_YTD.csv","https://opendata.citywindsor.ca/Uploads/SkunkInspection_2021.csv","https://opendata.citywindsor.ca/Uploads/SkunkInspection_2019.csv","https://opendata.citywindsor.ca/Uploads/SkunkInspection_2018.csv","https://opendata.citywindsor.ca/Uploads/SkunkInspection_2017.csv","https://opendata.citywindsor.ca/Uploads/SkunkInspection_Aug01-Dec31_2016.csv","https://opendata.citywindsor.ca/Uploads/SkunkInspection_2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/SidewalkConstructionAndRepair_YTD.csv","https://opendata.citywindsor.ca/Uploads/SidewalkConstructionAndRepair_2021.csv","https://opendata.citywindsor.ca/Uploads/SidewalkConstructionAndRepair_2019.csv","https://opendata.citywindsor.ca/Uploads/SidewalkConstructionAndRepair_2018.csv","https://opendata.citywindsor.ca/Uploads/SidewalkConstructionAndRepair_2017.csv","https://opendata.citywindsor.ca/Uploads/SidewalkConstructionAndRepair_Aug01-Dec31_2016.csv","https://opendata.citywindsor.ca/Uploads/SidewalkConstructionAndRepair_2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/ShoulderMaintenance_YTD.csv","https://opendata.citywindsor.ca/Uploads/ShoulderMaintenance_2021.csv","https://opendata.citywindsor.ca/Uploads/ShoulderMaintenance_2019.csv","https://opendata.citywindsor.ca/Uploads/ShoulderMaintenance_2018.csv","https://opendata.citywindsor.ca/Uploads/ShoulderMaintenance_2017.csv","https://opendata.citywindsor.ca/Uploads/ShoulderMaintenance_Aug01-Dec31_2016.csv","https://opendata.citywindsor.ca/Uploads/ShoulderMaintenance_2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/SewerProject_YTD.csv","https://opendata.citywindsor.ca/Uploads/SewerProject_2021.csv","https://opendata.citywindsor.ca/Uploads/SewerProject_2019.csv","https://opendata.citywindsor.ca/Uploads/SewerProject_2018.csv","https://opendata.citywindsor.ca/Uploads/SewerProject_2017.csv","https://opendata.citywindsor.ca/Uploads/SewerProject_2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/SewerProjectRestoration_YTD.csv","https://opendata.citywindsor.ca/Uploads/SewerProjectRestoration_2021.csv","https://opendata.citywindsor.ca/Uploads/SewerProjectRestoration_Aug01-Dec31_2016.csv","https://opendata.citywindsor.ca/Uploads/SewerProjectRestoration_2019.csv","https://opendata.citywindsor.ca/Uploads/SewerProjectRestoration_2018.csv","https://opendata.citywindsor.ca/Uploads/SewerProjectRestoration_2017.csv","https://opendata.citywindsor.ca/Uploads/SewerProjectRestoration_2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/SewerMaintenance_YTD.csv","https://opendata.citywindsor.ca/Uploads/SewerMaintenance_2021.csv","https://opendata.citywindsor.ca/Uploads/SewerMaintenance_2019.csv","https://opendata.citywindsor.ca/Uploads/SewerMaintenance_2018.csv","https://opendata.citywindsor.ca/Uploads/SewerMaintenance_2017.csv","https://opendata.citywindsor.ca/Uploads/SewerMaintenance_Aug01-Dec31_2016.csv","https://opendata.citywindsor.ca/Uploads/SewerMaintenance_2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/Sculptures_LL84.csv",
+         "https://opendata.citywindsor.ca/Uploads/Schools.csv",
+         "https://opendata.citywindsor.ca/Uploads/RodentExtermination_YTD.csv","https://opendata.citywindsor.ca/Uploads/RodentExtermination_2021.csv","https://opendata.citywindsor.ca/Uploads/RodentExtermination_2019.csv","https://opendata.citywindsor.ca/Uploads/RodentExtermination_2018.csv","https://opendata.citywindsor.ca/Uploads/RodentExtermination_2017.csv","https://opendata.citywindsor.ca/Uploads/RodentExtermination_Aug01-Dec31_2016.csv","https://opendata.citywindsor.ca/Uploads/RodentExtermination_2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/RoadMaintenance_YTD.csv","https://opendata.citywindsor.ca/Uploads/RoadMaintenance_2021.csv","https://opendata.citywindsor.ca/Uploads/RoadMaintenance_2019.csv","https://opendata.citywindsor.ca/Uploads/RoadMaintenance_2018.csv","https://opendata.citywindsor.ca/Uploads/RoadMaintenance_2017.csv","https://opendata.citywindsor.ca/Uploads/RoadMaintenance_Aug01-Dec31_2016.csv","https://opendata.citywindsor.ca/Uploads/RoadMaintenance_2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/RoadCleanupRequest_YTD.csv","https://opendata.citywindsor.ca/Uploads/RoadCleanupRequest_2021.csv","https://opendata.citywindsor.ca/Uploads/RoadCleanupRequest_2019.csv","https://opendata.citywindsor.ca/Uploads/RoadCleanupRequest_2018.csv","https://opendata.citywindsor.ca/Uploads/RoadCleanupRequest_2017.csv","https://opendata.citywindsor.ca/Uploads/RoadCleanupRequest_Aug01-Dec31_2016.csv","https://opendata.citywindsor.ca/Uploads/RoadCleanupRequest_2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/RoadCavein_YTD.csv","https://opendata.citywindsor.ca/Uploads/RoadCavein_2021.csv","https://opendata.citywindsor.ca/Uploads/RoadCavein_2019.csv","https://opendata.citywindsor.ca/Uploads/RoadCavein_2018.csv","https://opendata.citywindsor.ca/Uploads/RoadCavein_2017.csv","https://opendata.citywindsor.ca/Uploads/RoadCavein_Aug01-Dec31_2016.csv","https://opendata.citywindsor.ca/Uploads/RoadCavein_2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/RecyclingNotCollected_YTD.csv","https://opendata.citywindsor.ca/Uploads/RecyclingNotCollected_2021.csv","https://opendata.citywindsor.ca/Uploads/RecyclingNotCollected_2019.csv","https://opendata.citywindsor.ca/Uploads/RecyclingNotCollected_2018.csv","https://opendata.citywindsor.ca/Uploads/RecyclingNotCollected_2017.csv","https://opendata.citywindsor.ca/Uploads/RecyclingNotCollected_Aug01-Dec31_2016.csv","https://opendata.citywindsor.ca/Uploads/RecyclingNotCollected_2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/PublicPropertyObstruction_YTD.csv","https://opendata.citywindsor.ca/Uploads/PublicPropertyObstruction_2021.csv","https://opendata.citywindsor.ca/Uploads/PublicPropertyObstruction_2019.csv","https://opendata.citywindsor.ca/Uploads/PublicPropertyObstruction_2018.csv","https://opendata.citywindsor.ca/Uploads/PublicPropertyObstruction_2017.csv","https://opendata.citywindsor.ca/Uploads/PublicPropertyObstruction_Aug01-Dec31_2016.csv","https://opendata.citywindsor.ca/Uploads/PublicPropertyObstruction_2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/ProtectionOfParks_YTD.csv","https://opendata.citywindsor.ca/Uploads/ProtectionOfParks_2021.csv","https://opendata.citywindsor.ca/Uploads/ProtectionOfParks_2019.csv","https://opendata.citywindsor.ca/Uploads/ProtectionOfParks_2018.csv","https://opendata.citywindsor.ca/Uploads/ProtectionOfParks_2017.csv","https://opendata.citywindsor.ca/Uploads/ProtectionOfParks_Aug01-Dec31_2016.csv","https://opendata.citywindsor.ca/Uploads/ProtectionOfParks_2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/PropertyFloodingGrading_YTD.csv","https://opendata.citywindsor.ca/Uploads/PropertyFloodingGrading_2021.csv","https://opendata.citywindsor.ca/Uploads/PropertyFloodingGrading_2019.csv","https://opendata.citywindsor.ca/Uploads/PropertyFloodingGrading_2018.csv","https://opendata.citywindsor.ca/Uploads/PropertyFloodingGrading_2017.csv","https://opendata.citywindsor.ca/Uploads/PropertyFloodingGrading_Aug01-Dec31_2016.csv",
+         "https://opendata.citywindsor.ca/Uploads/Pothole_YTD.csv","https://opendata.citywindsor.ca/Uploads/Pothole_2021.csv","https://opendata.citywindsor.ca/Uploads/Pothole_2019.csv","https://opendata.citywindsor.ca/Uploads/Pothole_2018.csv","https://opendata.citywindsor.ca/Uploads/Pothole_2017.csv","https://opendata.citywindsor.ca/Uploads/Pothole_Aug01-Dec31_2016.csv","https://opendata.citywindsor.ca/Uploads/Pothole_2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/PortableSignIssue_YTD.csv","https://opendata.citywindsor.ca/Uploads/PortableSignIssue_2021.csv","https://opendata.citywindsor.ca/Uploads/PortableSignIssue_2019.csv","https://opendata.citywindsor.ca/Uploads/PortableSignIssue_2018.csv","https://opendata.citywindsor.ca/Uploads/PortableSignIssue_2017.csv","https://opendata.citywindsor.ca/Uploads/PortableSignIssue_Aug01-Dec31_2016.csv","https://opendata.citywindsor.ca/Uploads/PortableSignIssue_2020.csv",
+         "https://opendata.citywindsor.ca/Uploads/Police.csv")
+
+```
+
+```{r}
+i_read_file <- function(filename){
+  rio::import(filename)
+}
+
+```
+
+```{r}
+read_file_possibly <- purrr::safely(i_read_file)
+```
+
+```{r}
+list_it <- read_excel("List of Datasets.xlsx")
+list_it
+
+```
+
+```{r}
+list_it <- list_it %>% fill(c('Name of the Issue','Description','Attributes','Data Updation','No. of Datasets on the issue'))
+
+```
+
+```{r}
+glimpse(list_it)
+```
+
+```{r}
+list_datasets<- function(list_datasets){
+list_datasets <- list_it
+
+return(list_it)
+}
+
+```
+
+```{r}
+i_cleaned_list <- function(i_cleaned_list){
+i_cleaned_list <- read_excel("Erroneous Datasets.xlsx") # Reading in the list of datasets with inconsistencies and errors.
+
+return(i_cleaned_list)
+}
+
+```
+
+
+```{r}
+list_datasets()
+i_cleaned_list()
+
+```
+
+```{r}
+## Testing for get_data() function
+
+
+#error_extraction <- map(dataframe1,"error")
+#result_extraction <- map(dataframe1,"result")
+
+my_list3 <- list()                     # Create empty list
+for(i in 1:length(result_extraction)){              # Add key/value pairs in for-loop
+  my_list3[result_extraction[i]] <- (list_it$`Name of the Datasets`[i])
+}
+my_list3
+
+```
+
+
+
+<!-- 
+Run this 'development' chunk
+
+Store every call to library() that you need to run chunks line by line, as in a classical Rmd for analysis
+-->
+
+```{r development, include=FALSE}
+library(testthat)
+```
+
+<!--
+# Description of your package
+
+This will fill the description of your package.
+Fill and run the content of this chunk, before anything else. 
+
+Note: when you will use other flat templates, this part will be in a separate file. Do not be surprised!
+--> 
+
+```{r description, eval=FALSE}
+# Describe your package
+fusen::fill_description(
+  pkg = here::here(),
+  fields = list(
+    Title = "Learn how to build A Package From Rmarkdown file",
+    Description = "A Set of tools to understand packages structure. Use Rmarkdown First method to build a package from a defined template. Start your package with documentation. Everything can be set from a Rmarkdown file in your project.",
+    `Authors@R` = c(
+      person("Sebastien", "Rochette", email = "sebastien@thinkr.fr", role = c("aut", "cre")),
+      person(given = "ThinkR", role = "cph")
+    )
+  )
+)
+# Define License with use_*_license()
+usethis::use_mit_license("Sébastien Rochette")
+```
+
+
+```{r}
+fusen::inflate(
+  flat_file = "dev/flat_teaching.Rmd",
+  vignette_name = "Get started",
+  check = TRUE
+)
+```
+
+
+# Add one to any value
+
+This is the first tool of our wonderful package. 
+You can add `1` to any `value` using function `add_one()`.
+
+<!-- 
+This first section shows:
+
+- the three parts necessary for a package: 'function', 'examples' and 'tests'.  
+  + Note that the three following chunks have names accordingly.
+
+-->
+
+```{r}
+
+add_one <- function(value) {
+  result <- value + 1
+  return(result)
+}
+```
+
+```{r}
+add_ten <- function(value) {
+  result <- value + 10
+  return(result)
+}
+```
+
+
+<!--
+Here is an example on how to use the function.
+This should be a reproducible and working example
+-->
+
+```{r examples-add_one}
+add_one(12)
+add_one(56)
+```
+
+<!--
+Here are some unit tests to verify the function works as expected.
+-->
+
+```{r tests-add_one}
+test_that("add_one works", {
+  expect_equal(add_one(12), 13)
+  expect_equal(add_one(56), 57)
+})
+```
+
+That's it ! This the end of the documented story of our package. All components are there.
+
+<!-- 
+# Inflate your package
+
+You're one inflate from paper to box.
+Build your package from this very Rmd using `fusen::inflate()` 
+-->
+
+
+```{r development-inflate, eval=FALSE}
+# Execute in the console directly
+fusen::inflate(flat_file = "dev/flat_teaching.Rmd")
+```
+
+<!-- 
+- Verify your `"DESCRIPTION"` file has been updated
+- Verify your function is in `"R/"` directory
+- Verify your test is in `"tests/testthat/"` directory
+- Verify this Rmd appears in `"vignettes/"` directory 
+-->
