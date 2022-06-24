@@ -92,10 +92,17 @@ read_file1 <- function(filename){
   rio::import(filename)
 }
 
-dataframe1 <- map(url,read_file1)
+# Reading in all the URL's in a list
+
+dataframe1 <- map(url,read_file1)   
+
+
+# Reading in the list of datasets available in the package for the second function.
 
 list1 <- read_excel("List of Datasets.xlsx")
 list1
+
+# Using fill to remove the NA values as the original file was developed in excel and there are merged cells in the sheet.
 
 list1 <- list1 %>% fill(c('Name of the Datasets','Name of the Issue','Description','Attributes','Data Updation','No. of Datasets on the issue'))
 
@@ -108,7 +115,10 @@ list_datasets <- list1
 return(list1)
 }
 
-list_datasets()
+# list_datasets()
+
+
+# cleaned_list() function creation which shows what errors our team cleaned on our end
 
 cleaned_list <- function(cleaned_list){
 cleaned_list <- read_excel("Erroneous Datasets.xlsx") # Reading in the list of datasets with inconsistencies and errors.
